@@ -1,34 +1,38 @@
 var test = require('tape');
-var { parseUserAgent } = require('../');
+var { parseUserAgent, detectWebkit } = require('../');
 
 function assertAgentString(t, agentString, expectedResult) {
   t.deepEqual(parseUserAgent(agentString), expectedResult);
 }
 
-test('detects Chrome', function(t) {
+function assertDetectWebkit(t, agentString, expectedResult) {
+  t.deepEqual(detectWebkit(agentString), expectedResult);
+}
+
+test('detects Chrome', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
-    { name: 'chrome', version: '50.0.2661', os: 'Linux' }
+    { name: 'chrome', version: '50.0.2661', os: 'Linux', webkit: { version: "537.36" } }
   );
 
   assertAgentString(t,
     'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
-    { name: 'chrome', version: '41.0.2228', os: 'Windows 7' }
+    { name: 'chrome', version: '41.0.2228', os: 'Windows 7', webkit: { version: "537.36" } }
   );
 
   t.end();
 });
 
-test('detects Chrome for iOS', function(t) {
+test('detects Chrome for iOS', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1_1 like Mac OS X; en) AppleWebKit/534.46.0 (KHTML, like Gecko) CriOS/19.0.1084.60 Mobile/9B206 Safari/7534.48.3',
-    { name: 'crios', version: '19.0.1084', os: 'iOS' }
+    { name: 'crios', version: '19.0.1084', os: 'iOS', webkit: { version: "534.46.0" } }
   );
 
   t.end();
 });
 
-test('detects Firefox', function(t) {
+test('detects Firefox', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0',
     { name: 'firefox', version: '46.0.0', os: 'Linux' }
@@ -42,35 +46,35 @@ test('detects Firefox', function(t) {
   t.end();
 });
 
-test('detects Firefox for iOS', function(t) {
+test('detects Firefox for iOS', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (iPad; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4',
-    { name: 'fxios', version: '1.0.0', os: 'iOS' }
+    { name: 'fxios', version: '1.0.0', os: 'iOS', webkit: { version: "600.1.4" } }
   );
 
   assertAgentString(t,
     'Mozilla/5.0 (iPad; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/3.2 Mobile/12F69 Safari/600.1.4',
-    { name: 'fxios', version: '3.2.0', os: 'iOS' }
+    { name: 'fxios', version: '3.2.0', os: 'iOS', webkit: { version: "600.1.4" } }
   );
 
   t.end();
 });
 
-test('detects Edge', function(t) {
+test('detects Edge', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
-    { name: 'edge', version: '12.246.0', os: 'Windows 10' }
+    { name: 'edge', version: '12.246.0', os: 'Windows 10', webkit: { version: "537.36" } }
   );
 
   assertAgentString(t,
     'Mozilla/5.0 (Windows NT 6.3; Win64, x64; Touch) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36 Edge/12.0 (Touch; Trident/7.0; .NET4.0E; .NET4.0C; .NET CLR 3.5.30729; .NET CLR 2.0.50727; .NET CLR 3.0.30729; HPNTDFJS; H9P; InfoPath',
-    { name: 'edge', version: '12.0.0', os: 'Windows 8.1' }
+    { name: 'edge', version: '12.0.0', os: 'Windows 8.1', webkit: { version: "537.36" } }
   );
 
   t.end();
 });
 
-test('detects IE', function(t) {
+test('detects IE', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; .NET4.0E; .NET4.0C; rv:11.0) like Gecko',
     { name: 'ie', version: '11.0.0', os: 'Windows 8.1' }
@@ -94,10 +98,10 @@ test('detects IE', function(t) {
   t.end();
 });
 
-test('detects Opera', function(t) {
+test('detects Opera', function (t) {
   assertAgentString(t,
     'Opera/9.80 (J2ME/MIDP; Opera Mini/5.0 (Windows; U; Windows NT 5.1; en) AppleWebKit/886; U; en) Presto/2.4.15',
-    { name: 'opera', version: '9.80.0', os: 'Windows XP' }
+    { name: 'opera', version: '9.80.0', os: 'Windows XP', webkit: { version: "886" } }
   );
 
   assertAgentString(t,
@@ -107,107 +111,107 @@ test('detects Opera', function(t) {
 
   assertAgentString(t,
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36 OPR/38.0.2220.31',
-    { name: 'opera', version: '38.0.2220', os: 'Mac OS' }
+    { name: 'opera', version: '38.0.2220', os: 'Mac OS', webkit: { version: "537.36" } }
   );
 
   t.end();
 });
 
-test('detects BlackBerry 10', function(t) {
+test('detects BlackBerry 10', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (BB10; Touch) AppleWebKit/537.10+ (KHTML, like Gecko) Version/7.2.0.0 Mobile Safari/537.10+',
-    { name: 'bb10', version: '7.2.0', os: 'BlackBerry OS' }
+    { name: 'bb10', version: '7.2.0', os: 'BlackBerry OS', webkit: { version: "537.10+" } }
   );
 
   t.end();
 });
 
-test('detects Android Webkit browser', function(t) {
+test('detects Android Webkit browser', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
-    { name: 'android', version: '4.0.3', os: 'Android OS' }
+    { name: 'android', version: '4.0.3', os: 'Android OS', webkit: { version: "534.30" } }
   );
 
   t.end();
 });
 
-test('detects mobile Safari', function(t) {
+test('detects mobile Safari', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25',
-    { name: 'ios', version: '6.0.0', os: 'iOS' }
+    { name: 'ios', version: '6.0.0', os: 'iOS', webkit: { version: "536.26" } }
   );
 
   assertAgentString(t,
     'Mozilla/5.0 (iPod; U; CPU iPhone OS 4_3_3 like Mac OS X; ja-jp) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5',
-    { name: 'ios', version: '5.0.2', os: 'iOS' }
+    { name: 'ios', version: '5.0.2', os: 'iOS', webkit: { version: "533.17.9" } }
   );
 
   t.end();
 });
 
-test('detects Safari', function(t) {
+test('detects Safari', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A',
-    { name: 'safari', version: '7.0.3', os: 'Mac OS' }
+    { name: 'safari', version: '7.0.3', os: 'Mac OS', webkit: { version: "537.75.14" } }
   );
 
   t.end();
 });
 
-test('detects Yandex Browser', function(t) {
-    assertAgentString(t,
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 YaBrowser/16.10.0.2774 Safari/537.36',
-        { name: 'yandexbrowser', version: '16.10.0', os: 'Mac OS' }
-    );
+test('detects Yandex Browser', function (t) {
+  assertAgentString(t,
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 YaBrowser/16.10.0.2774 Safari/537.36',
+    { name: 'yandexbrowser', version: '16.10.0', os: 'Mac OS', webkit: { version: "537.36" } }
+  );
 
-    t.end();
+  t.end();
 });
 
-test('detects Vivaldi Browser', function(t) {
-    assertAgentString(t,
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36 Vivaldi/1.2.490.43',
-        { name: 'vivaldi', version: '1.2.490', os: 'Mac OS' }
-    );
+test('detects Vivaldi Browser', function (t) {
+  assertAgentString(t,
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36 Vivaldi/1.2.490.43',
+    { name: 'vivaldi', version: '1.2.490', os: 'Mac OS', webkit: { version: "537.36" } }
+  );
 
-    t.end();
+  t.end();
 });
 
-test('detects Kakaotalk Browser', function(t) {
-    assertAgentString(t,
-        'Netscape 5.0 (iPhone; CPU iPhone OS 10_3 1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Mobile/14E304 KAKAOTALK 6.2.2',
-        { name: 'kakaotalk', version: '6.2.2', os: 'iOS' }
-    );
+test('detects Kakaotalk Browser', function (t) {
+  assertAgentString(t,
+    'Netscape 5.0 (iPhone; CPU iPhone OS 10_3 1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Mobile/14E304 KAKAOTALK 6.2.2',
+    { name: 'kakaotalk', version: '6.2.2', os: 'iOS', webkit: { version: "603.1.30" } }
+  );
 
-    assertAgentString(t,
-        'Mozilla/5.0 (iPhone; CPU iPhone OS  10_3 1 like Mac OS X) AppleWebKit/  603.1.30 (KHTML, like Gecko) Mobile/ 14E304 KAKAOTALK 6.2.2',
-        { name: 'kakaotalk', version: '6.2.2', os: 'iOS' }
-    );
+  assertAgentString(t,
+    'Mozilla/5.0 (iPhone; CPU iPhone OS  10_3 1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Mobile/ 14E304 KAKAOTALK 6.2.2',
+    { name: 'kakaotalk', version: '6.2.2', os: 'iOS', webkit: { version: "603.1.30" } }
+  );
 
-    t.end();
+  t.end();
 });
 
-test('detects PhantomJS Browser', function(t) {
-    assertAgentString(t,
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1',
-        { name: 'phantomjs', version: '2.1.1', os: 'Mac OS' }
-    );
+test('detects PhantomJS Browser', function (t) {
+  assertAgentString(t,
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1',
+    { name: 'phantomjs', version: '2.1.1', os: 'Mac OS', webkit: { version: "538.1" } }
+  );
 
-    t.end();
+  t.end();
 });
 
-test('detects AOLShield Browser', function(t) {
-    assertAgentString(t,
-        'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2841.00 Safari/537.36 AOLShield/54.0.2848.0',
-        { name: 'aol', version: '54.0.2848', os: 'Windows 10' }
-    );
+test('detects AOLShield Browser', function (t) {
+  assertAgentString(t,
+    'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2841.00 Safari/537.36 AOLShield/54.0.2848.0',
+    { name: 'aol', version: '54.0.2848', os: 'Windows 10', webkit: { version: "537.36" } }
+  );
 
-    t.end();
+  t.end();
 });
 
 test('detects facebook in-app browser', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_5 like Mac OS X) AppleWebKit/604.5.6 (KHTML, like Gecko) Mobile/15D60 [FBAN/FBIOS;FBAV/157.0.0.42.96;FBBV/90008621;FBDV/iPhone9,1;FBMD/iPhone;FBSN/iOS;FBSV/11.2.5;FBSS/2;FBCR/Verizon;FBID/phone;FBLC/en_US;FBOP/5;FBRV/0]',
-    { name: 'facebook', version: '157.0.0', os: 'iOS' }
+    { name: 'facebook', version: '157.0.0', os: 'iOS', webkit: { version: "604.5.6" } }
   );
 
   t.end();
@@ -216,7 +220,7 @@ test('detects facebook in-app browser', function (t) {
 test('detects instagram in-app browser', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13F69 Instagram 8.4.0 (iPhone7,2; iPhone OS 9_3_2; nb_NO; nb-NO; scale=2.00; 750x1334',
-    { name: 'instagram', version: '8.4.0', os: 'iOS' }
+    { name: 'instagram', version: '8.4.0', os: 'iOS', webkit: { version: "601.1.46" } }
   );
 
   t.end();
@@ -225,23 +229,33 @@ test('detects instagram in-app browser', function (t) {
 test('detects native iOS WebView browser', function (t) {
   assertAgentString(t,
     'User-Agent: Mozilla/5.0 (iPad; U; CPU OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile',
-    { name: 'ios-webview', version: '533.17.9', os: 'iOS' }
+    { name: 'ios-webview', version: '533.17.9', os: 'iOS', webkit: { version: "533.17.9" } }
   );
 
   assertAgentString(t,
     'Mozilla/5.0 (iPad; CPU OS 11_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E216',
-    { name: 'ios-webview', version: '605.1.15', os: 'iOS' }
+    { name: 'ios-webview', version: '605.1.15', os: 'iOS', webkit: { version: "605.1.15" } }
   );
 
   t.end();
 });
 
-test('detects Samsung Internet browser', function(t) {
+test('detects Samsung Internet browser', function (t) {
   assertAgentString(t,
     'Mozilla/5.0 (Linux; Android 5.0.2; SAMSUNG SM-G925F Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/4.0 Chrome/44.0.2403.133 Mobile Safari/537.36',
-    { name: 'samsung', version: '4.0.0', os: 'Android OS' }
+    { name: 'samsung', version: '4.0.0', os: 'Android OS', webkit: { version: "537.36" } }
   );
 
+  t.end();
+});
+
+test('detects Webkit version', function (t) {
+  assertDetectWebkit(t, 'Mozilla/5.0 (Linux; Android 5.0.2; SAMSUNG SM-G925F Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/4.0 Chrome/44.0.2403.133 Mobile Safari/537.36', { version: "537.36" })
+  t.end();
+});
+
+test('detects Webkit version', function (t) {
+  assertDetectWebkit(t, null, null)
   t.end();
 });
 
@@ -272,11 +286,11 @@ test('detects crawler: YandexBot', function (t) {
   t.end();
 });
 
-test('handles no browser', function(t) {
-    assertAgentString(t,
-        null,
-        null
-    );
+test('handles no browser', function (t) {
+  assertAgentString(t,
+    null,
+    null
+  );
 
-    t.end();
+  t.end();
 });

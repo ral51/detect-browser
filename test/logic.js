@@ -1,8 +1,12 @@
 var test = require('tape');
-var { parseUserAgent } = require('../');
+var { parseUserAgent, detectWebkit } = require('../');
 
 function assertAgentString(t, agentString, expectedResult) {
   t.deepEqual(parseUserAgent(agentString), expectedResult);
+}
+
+function assertDetectWebkit(t, agentString, expectedResult) {
+  t.deepEqual(detectWebkit(agentString), expectedResult);
 }
 
 test('detects Chrome', function (t) {
@@ -242,6 +246,16 @@ test('detects Samsung Internet browser', function (t) {
     { name: 'samsung', version: '4.0.0', os: 'Android OS', webkit: { version: "537.36" } }
   );
 
+  t.end();
+});
+
+test('detects Webkit version', function (t) {
+  assertDetectWebkit(t, 'Mozilla/5.0 (Linux; Android 5.0.2; SAMSUNG SM-G925F Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/4.0 Chrome/44.0.2403.133 Mobile Safari/537.36', { version: "537.36" })
+  t.end();
+});
+
+test('detects Webkit version', function (t) {
+  assertDetectWebkit(t, null, null)
   t.end();
 });
 
